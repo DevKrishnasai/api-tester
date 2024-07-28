@@ -17,6 +17,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { Textarea } from "./ui/textarea";
+import { toast } from "sonner";
 
 interface OptionalParam {
   key: string;
@@ -77,6 +78,9 @@ export const FullPanel = () => {
 
   const handleSend = async () => {
     try {
+      toast.loading("Sending request...", {
+        id: "loading",
+      });
       const queryParams = new URLSearchParams(
         optionalParams
           .filter((param) => param.key && param.value)
@@ -110,8 +114,14 @@ export const FullPanel = () => {
 
       const res = await fetch(url, options);
       const data = await res.json();
+      toast.success("Request successful", {
+        id: "loading",
+      });
       setResponse(JSON.stringify(data, null, 2));
     } catch (error) {
+      toast.error("Request failed", {
+        id: "loading",
+      });
       console.error(error);
       // @ts-ignore
       setResponse(`Error: ${error.message}`);
