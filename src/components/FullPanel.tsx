@@ -31,6 +31,10 @@ export const FullPanel = () => {
     { key: "", value: "" },
   ]);
   const [requestBody, setRequestBody] = useState("");
+  const [bearerToken, setBearerToken] = useState("");
+  const [customHeaders, setCustomHeaders] = useState<OptionalParam[]>([
+    { key: "", value: "" },
+  ]);
   const [response, setResponse] = useState("");
 
   const handleAddParam = () => {
@@ -40,6 +44,15 @@ export const FullPanel = () => {
   const handleRemoveParam = (index: number) => {
     const newParams = optionalParams.filter((_, i) => i !== index);
     setOptionalParams(newParams);
+  };
+
+  const handleAddHeader = () => {
+    setCustomHeaders([...customHeaders, { key: "", value: "" }]);
+  };
+
+  const handleRemoveHeader = (index: number) => {
+    const newHeaders = customHeaders.filter((_, i) => i !== index);
+    setCustomHeaders(newHeaders);
   };
 
   const handleParamChange = (
@@ -52,6 +65,16 @@ export const FullPanel = () => {
     setOptionalParams(newParams);
   };
 
+  const handleHeaderChange = (
+    index: number,
+    field: "key" | "value",
+    value: string
+  ) => {
+    const newHeaders = [...customHeaders];
+    newHeaders[index][field] = value;
+    setCustomHeaders(newHeaders);
+  };
+
   const handleSend = async () => {
     try {
       const queryParams = new URLSearchParams(
@@ -62,15 +85,29 @@ export const FullPanel = () => {
       const url = `${baseUrl}${routePath}${
         queryParams ? `?${queryParams}` : ""
       }`;
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (bearerToken) {
+        headers["Authorization"] = `Bearer ${bearerToken}`;
+      }
+
+      customHeaders.forEach((header) => {
+        if (header.key && header.value) {
+          headers[header.key] = header.value;
+        }
+      });
+
       const options: RequestInit = {
         method: requestType,
+        headers,
       };
+
       if (requestType !== "GET" && requestBody) {
-        options.headers = {
-          "Content-Type": "application/json",
-        };
         options.body = requestBody;
       }
+
       const res = await fetch(url, options);
       const data = await res.json();
       setResponse(JSON.stringify(data, null, 2));
@@ -156,6 +193,46 @@ export const FullPanel = () => {
                     className="h-32"
                   />
                 )}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold">Bearer Token</h3>
+                  <Input
+                    placeholder="Bearer Token"
+                    value={bearerToken}
+                    onChange={(e) => setBearerToken(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold">Custom Headers</h3>
+                  {customHeaders.map((header, index) => (
+                    <div key={index} className="flex gap-2 items-center">
+                      <Input
+                        placeholder="Header Key"
+                        value={header.key}
+                        onChange={(e) =>
+                          handleHeaderChange(index, "key", e.target.value)
+                        }
+                      />
+                      <Input
+                        placeholder="Header Value"
+                        value={header.value}
+                        onChange={(e) =>
+                          handleHeaderChange(index, "value", e.target.value)
+                        }
+                      />
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleRemoveHeader(index)}
+                        disabled={customHeaders.length === 1}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" onClick={handleAddHeader}>
+                    <Plus className="h-4 w-4 mr-2" /> Add Header
+                  </Button>
+                </div>
                 <Button onClick={handleSend} className="w-full">
                   Send
                 </Button>
