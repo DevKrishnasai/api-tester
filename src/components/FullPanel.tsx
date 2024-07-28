@@ -16,6 +16,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Textarea } from "./ui/textarea";
 
 interface OptionalParam {
   key: string;
@@ -26,10 +27,10 @@ export const FullPanel = () => {
   const [baseUrl, setBaseUrl] = useState("");
   const [requestType, setRequestType] = useState("GET");
   const [routePath, setRoutePath] = useState("");
-  //add optional params for query string here (add key value pairs to the array @sahith)
   const [optionalParams, setOptionalParams] = useState<OptionalParam[]>([
     { key: "", value: "" },
   ]);
+  const [requestBody, setRequestBody] = useState("");
   const [response, setResponse] = useState("");
 
   const handleAddParam = () => {
@@ -58,15 +59,23 @@ export const FullPanel = () => {
           .filter((param) => param.key && param.value)
           .map((param) => [param.key, param.value])
       ).toString();
-
       const url = `${baseUrl}${routePath}${
         queryParams ? `?${queryParams}` : ""
       }`;
-      const res = await fetch(url, { method: requestType });
+      const options: RequestInit = {
+        method: requestType,
+      };
+      if (requestType !== "GET" && requestBody) {
+        options.headers = {
+          "Content-Type": "application/json",
+        };
+        options.body = requestBody;
+      }
+      const res = await fetch(url, options);
       const data = await res.json();
-      console.log(data);
       setResponse(JSON.stringify(data, null, 2));
     } catch (error) {
+      console.error(error);
       // @ts-ignore
       setResponse(`Error: ${error.message}`);
     }
@@ -74,17 +83,14 @@ export const FullPanel = () => {
 
   return (
     <>
-      <div className="w-11/12 mx-auto p-2 min-h-full ">
+      <div className="w-11/12 mx-auto p-2 min-h-full">
         <h1 className="text-2xl font-bold mb-4">API Tester</h1>
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="w-full  h-full  "
-        >
+        <ResizablePanelGroup direction="horizontal" className="w-full h-full">
           <ResizablePanel className="min-h-fit">
             <Card className="h-full">
               <CardContent className="p-4 space-y-4">
                 <Input
-                  placeholder="Base URL (e.g. https://jsonplaceholder.typicode.com)"
+                  placeholder="Base URL (e.g. https://jsonplaceholder.typicode.com) (remove trailing slash)"
                   value={baseUrl}
                   onChange={(e) => setBaseUrl(e.target.value)}
                 />
@@ -100,7 +106,7 @@ export const FullPanel = () => {
                   </SelectContent>
                 </Select>
                 <Input
-                  placeholder="Route Path (e.g. /posts or /users/1 )"
+                  placeholder="Route Path (e.g. /posts or /users/1  or /posts/1/comments)"
                   value={routePath}
                   onChange={(e) => setRoutePath(e.target.value)}
                 />
@@ -136,18 +142,32 @@ export const FullPanel = () => {
                     <Plus className="h-4 w-4 mr-2" /> Add Parameter
                   </Button>
                 </div>
+                {(requestType === "POST" || requestType === "PUT") && (
+                  <Textarea
+                    placeholder={`(optional) Request body in JSON format
+{
+  'title': 'foo',
+  'body': 'bar',
+  'userId': 1
+}
+                    `}
+                    value={requestBody}
+                    onChange={(e) => setRequestBody(e.target.value)}
+                    className="h-32"
+                  />
+                )}
                 <Button onClick={handleSend} className="w-full">
                   Send
                 </Button>
               </CardContent>
             </Card>
           </ResizablePanel>
-          <ResizableHandle />
+          <ResizableHandle withHandle />
           <ResizablePanel className="min-h-fit">
-            <Card className="h-full ">
+            <Card className="h-full">
               <CardContent className="p-4">
                 <h2 className="text-xl font-semibold mb-2">Response</h2>
-                <pre className="bg-gray-100 p-4 rounded-md overflow-auto ">
+                <pre className="bg-gray-100 p-4 rounded-md overflow-auto">
                   {response || "No response yet"}
                 </pre>
               </CardContent>
