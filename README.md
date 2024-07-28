@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# API Tester
 
-## Getting Started
+API Tester is a web-based tool for testing and interacting with APIs. It allows users to make HTTP requests, view responses, and manage headers and parameters. This project is built using Next.js, Tailwind CSS, and ShadCN UI.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Next.js**: A React framework for server-side rendering and static site generation.
+- **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
+- **ShadCN UI**: A collection of customizable UI components for React.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Base URL Input**: Easily specify the base URL for your API.
+- **Request Types**: Supports GET, POST, PUT, and DELETE HTTP methods.
+- **Route Path Input**: Define specific API endpoints.
+- **Optional Parameters**: Add and manage query parameters.
+- **Request Body**: Add JSON payloads for POST and PUT requests.
+- **Bearer Token and Custom Headers**: Include authorization tokens and custom headers in requests.
+- **Response Viewer**: Display and format JSON responses from API requests.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Installation
 
-## Learn More
+1. **Clone the repository:**
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   git clone https://github.com/DevKrishnasai/api-tester
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. **Navigate to the project directory:**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+   ```bash
+   cd api-tester
+   ```
 
-## Deploy on Vercel
+3. **Install dependencies:**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+4. **Run the development server:**
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the app.
+
+## Usage
+
+1. Enter the base URL of the API you want to test.
+2. Select the request type (GET, POST, PUT, DELETE).
+3. Specify the route path.
+4. (Optional) Add query parameters and headers.
+5. (Optional) Add a JSON body for POST and PUT requests.
+6. Click "Send" to make the request.
+7. View the response in the response viewer.
